@@ -14,15 +14,23 @@ public class Enemy : MonoBehaviour
     [SerializeField] public float timeToLostPlayer;
     [SerializeField] public float normalSpeed;
     [SerializeField] public float chaseSpeed;
+    [SerializeField] public float searchRadius;
+    [SerializeField] public int manyPlaceToSearch;
+    [SerializeField] public float searchMoveDelay;
 
     [HideInInspector] public NavMeshAgent navMeshAgent;
+    [HideInInspector] public Animator animator;
+    [HideInInspector] public AudioSource audioSource;
     private BaseState currentState;
     public PatrolState patrolState = new PatrolState();
     public ChaseState chaseState = new ChaseState();
     public RetreatState retreatState = new RetreatState();
+    public SearchState searchState= new SearchState();
 
     private void Awake()
     {
+        audioSource = GetComponent<AudioSource>();
+        animator = GetComponent<Animator>();
         navMeshAgent = GetComponent<NavMeshAgent>();
         currentState = patrolState;
         patrolState.EnterState(this);
@@ -65,5 +73,20 @@ public class Enemy : MonoBehaviour
     private void StopRetreating()
     {
         SwitchState(patrolState);
+    }
+
+    public void Dead()
+    {
+        Destroy(gameObject);
+    }
+
+    private void OnCollisionEnter(Collision other)
+    {
+        if(player.isInvisible) return;
+
+        if (other.gameObject.CompareTag("Player"))
+        {
+            player.Dead(1);
+        }
     }
 }

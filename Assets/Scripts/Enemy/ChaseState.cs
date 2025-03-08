@@ -8,6 +8,7 @@ public class ChaseState : BaseState
 
     public void EnterState(Enemy enemy)
     {
+        enemy.animator.SetTrigger("ChaseState");
         playerLostTime = 0;
         enemy.navMeshAgent.speed = enemy.chaseSpeed;
         Debug.Log("Start Chasing");
@@ -17,6 +18,10 @@ public class ChaseState : BaseState
     {
         if (enemy.player != null)
         {
+            if (enemy.player.isInvisible)
+            {
+                enemy.SwitchState(enemy.patrolState);
+            }
             enemy.navMeshAgent.destination = enemy.player.transform.position;
             if (DetectingPlayer.DetectPlayer(enemy))
             {
@@ -24,10 +29,9 @@ public class ChaseState : BaseState
             }
             if (playerLostTime >= enemy.timeToLostPlayer)
             {
-                enemy.SwitchState(enemy.patrolState);
+                enemy.SwitchState(enemy.searchState);
             }
         }
-
         playerLostTime += Time.deltaTime;
     }
 

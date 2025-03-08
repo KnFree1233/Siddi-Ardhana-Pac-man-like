@@ -40,4 +40,9 @@ public static class DrawColliderLine
             prevPoint = nextPoint;
         }
     }
+
+    public static void DrawRaycastTarget(Vector3 position, Vector3 direction, float distance, Color color)
+    {
+        Debug.DrawRay(position, direction * distance, color, 0.1f);
+    }
 }

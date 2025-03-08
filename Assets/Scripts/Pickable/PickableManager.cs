@@ -5,15 +5,12 @@ using UnityEngine;
 public class PickableManager : MonoBehaviour
 {
     [SerializeField] private Player player;
-    [SerializeField] private Enemy enemy;
-    [SerializeField] private TMP_Text coinsLeftText;
-    [SerializeField] private TMP_Text winText;
+    [SerializeField] ScoreManager scoreManager;
 
     private List<Pickable> pickableList = new List<Pickable>();
 
     void Start()
     {
-        winText.enabled = false;
         InitPickableList();
     }
 
@@ -26,7 +23,7 @@ public class PickableManager : MonoBehaviour
             pickables[i].OnPicked += OnPickablePicked;
             pickableList.Add(pickables[i]);
         }
-        coinsLeftText.text = pickableList.Count + " coins left";
+        scoreManager?.SetMaxScore(pickableList.Count);
         Debug.Log(pickableList.Count);
     }
 
@@ -36,13 +33,7 @@ public class PickableManager : MonoBehaviour
         {
             player?.PickPowerUp();
         }
+        scoreManager?.AddScore(1);
         pickableList.Remove(pickable);
-        coinsLeftText.text = pickableList.Count + " coins left";
-        if (pickableList.Count <= 0)
-        {
-            Destroy(enemy.gameObject);
-            winText.enabled = true;
-            Debug.Log("You Win!");
-        }
     }
 }

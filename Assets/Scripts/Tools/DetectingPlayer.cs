@@ -19,12 +19,12 @@ public static class DetectingPlayer
                 float distanceToTarget = Vector3.Distance(enemyTransform.position, target.position);
                 if (!Physics.Raycast(enemyTransform.position, directionToTarget, distanceToTarget, enemy.obstacleLayer))
                 {
-                    Debug.DrawRay(enemyTransform.position, directionToTarget * enemy.radius, Color.green, 0.1f);
+                    DrawColliderLine.DrawRaycastTarget(enemyTransform.position, directionToTarget, enemy.radius, Color.green);
                     return true;
                 }
                 else
                 {
-                    Debug.DrawRay(enemyTransform.position, directionToTarget * enemy.radius, Color.red, 0.1f);
+                    DrawColliderLine.DrawRaycastTarget(enemyTransform.position, directionToTarget, enemy.radius, Color.red);
                     return false;
                 }
             }

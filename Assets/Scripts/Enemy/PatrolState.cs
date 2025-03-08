@@ -9,6 +9,7 @@ public class PatrolState : BaseState
 
     public void EnterState(Enemy enemy)
     {
+        enemy.animator.SetTrigger("PatrolState");
         enemy.navMeshAgent.speed = enemy.normalSpeed;
         isMoving = false;
         Debug.Log("Start Patrol");
@@ -16,7 +17,7 @@ public class PatrolState : BaseState
 
     public void UpdateState(Enemy enemy)
     {
-        if (DetectingPlayer.DetectPlayer(enemy))
+        if (DetectingPlayer.DetectPlayer(enemy) && !enemy.player.isInvisible)
         {
             enemy.SwitchState(enemy.chaseState);
         }
@@ -25,6 +26,7 @@ public class PatrolState : BaseState
             isMoving = true;
             int index = Random.Range(0, enemy.waypoints.Count);
             destination = enemy.waypoints[index].position;
+
             enemy.navMeshAgent.destination = destination;
         }
         else
