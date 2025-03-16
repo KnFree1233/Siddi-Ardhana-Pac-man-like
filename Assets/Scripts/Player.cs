@@ -1,7 +1,6 @@
 using System;
 using System.Collections;
 using TMPro;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -20,15 +19,18 @@ public class Player : MonoBehaviour
     [SerializeField] private int playerHealth;
     [SerializeField] private TMP_Text healthText;
     [SerializeField] private float invisibleTime;
+    [SerializeField] public float walkNoise;
+    [SerializeField] public float runNoise;
 
     private Animator animator;
     private float currStamina;
     private float staminaRegenTime;
-    private bool isPowerUp;
     private Coroutine powerUpCoroutine;
     public Action OnPowerUpStart;
     public Action OnPowerUpStop;
+    [HideInInspector] public bool isPowerUp;
     [HideInInspector] public bool isInvisible;
+    [HideInInspector] public float currNoise;
     private Rigidbody _rigidbody;
     private static Action OnPlayerLose;
 
@@ -38,6 +40,7 @@ public class Player : MonoBehaviour
         animator = GetComponent<Animator>();
         _rigidbody = GetComponent<Rigidbody>();
         currStamina = maxStamina;
+        currNoise = walkNoise;
     }
 
     void Start()
@@ -125,23 +128,29 @@ public class Player : MonoBehaviour
     private bool IsRunning()
     {
         float value = Input.GetAxis("Fire3");
-        if (value == 1) return true;
-        else return false;
+        if (value == 1)
+        {
+            currNoise = runNoise;
+            return true;
+        }
+        else
+        {
+            currNoise = walkNoise;
+            return false;
+        }
     }
 
     private void OnCollisionEnter(Collision other)
     {
         if (isPowerUp && other.gameObject.CompareTag("Enemy"))
         {
-            OnPowerUpStart -= OnPowerUpStart;
-            OnPowerUpStop -= OnPowerUpStop;
             other.gameObject.GetComponent<Enemy>().Dead();
         }
     }
 
     public void Dead(int damage)
     {
-        if(playerHealth <= 0) return;
+        if (playerHealth <= 0) return;
         playerHealth -= damage;
         if (playerHealth == 0)
         {

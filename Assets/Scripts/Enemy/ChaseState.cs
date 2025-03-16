@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class ChaseState : BaseState
@@ -21,11 +19,19 @@ public class ChaseState : BaseState
             if (enemy.player.isInvisible)
             {
                 enemy.SwitchState(enemy.patrolState);
+                return;
             }
-            enemy.navMeshAgent.destination = enemy.player.transform.position;
             if (DetectingPlayer.DetectPlayer(enemy))
             {
                 playerLostTime = 0;
+                enemy.navMeshAgent.destination = enemy.player.transform.position;
+                return;
+            }
+            else if (DetectingPlayer.HearingPlayer(enemy))
+            {
+                playerLostTime = 0;
+                enemy.navMeshAgent.destination = enemy.target.position;
+                return;
             }
             if (playerLostTime >= enemy.timeToLostPlayer)
             {

@@ -6,8 +6,7 @@ public static class DetectingPlayer
     public static bool DetectPlayer(Enemy enemy)
     {
         Transform enemyTransform = enemy.transform;
-
-        Collider[] rangeChecks = Physics.OverlapSphere(enemyTransform.position, enemy.radius, enemy.playerLayer);
+        Collider[] rangeChecks = CheckOverlapShpere(enemyTransform.position, enemy.radius, enemy.playerLayer);
 
         if (rangeChecks.Length != 0)
         {
@@ -38,5 +37,31 @@ public static class DetectingPlayer
         {
             return false;
         }
+    }
+
+    //Function for detect player base float noise on player and float noise tolerance on enemy
+    public static bool HearingPlayer(Enemy enemy)
+    {
+        enemy.target = null;
+        Transform enemyTransform = enemy.transform;
+        Collider[] rangeChecks = CheckOverlapShpere(enemyTransform.position, enemy.radius, enemy.playerLayer);
+        if (rangeChecks.Length != 0)
+        {
+            Transform target = rangeChecks[0].transform;
+            float distanceToTarget = Vector3.Distance(target.position, enemyTransform.position);
+
+            if (distanceToTarget - enemy.player.currNoise < enemy.noiseTolerance)
+            {
+                enemy.target = target;
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private static Collider[] CheckOverlapShpere(Vector3 position, float radius, LayerMask layer)
+    {
+        return Physics.OverlapSphere(position, radius, layer);
     }
 }

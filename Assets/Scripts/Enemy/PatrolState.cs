@@ -1,14 +1,13 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class PatrolState : BaseState
 {
     private bool isMoving;
-    Vector3 destination;
+    private Vector3 destination;
 
     public void EnterState(Enemy enemy)
     {
+        enemy.audioSource.Play();
         enemy.animator.SetTrigger("PatrolState");
         enemy.navMeshAgent.speed = enemy.normalSpeed;
         isMoving = false;
@@ -17,9 +16,16 @@ public class PatrolState : BaseState
 
     public void UpdateState(Enemy enemy)
     {
-        if (DetectingPlayer.DetectPlayer(enemy) && !enemy.player.isInvisible)
+        if (!enemy.player.isInvisible)
         {
-            enemy.SwitchState(enemy.chaseState);
+            if (DetectingPlayer.DetectPlayer(enemy))
+            {
+                enemy.SwitchState(enemy.chaseState);
+            }
+            else if (DetectingPlayer.HearingPlayer(enemy))
+            {
+                enemy.SwitchState(enemy.searchState);
+            }
         }
         if (!isMoving)
         {

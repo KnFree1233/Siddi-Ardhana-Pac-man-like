@@ -1,41 +1,54 @@
-using System.Collections;
 using System.Collections.Generic;
-using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
-    [SerializeField] TMP_Text finishText;
-    [SerializeField] private Enemy enemy;
     [SerializeField] private Player player;
+    [SerializeField] private GameObject enemyPrefabs;
+    [SerializeField] private Transform[] enemySpawnPoints;
+    [SerializeField] private List<Transform> enemyWaypoints = new List<Transform>();
 
+    private Enemy enemy;
     private ScoreManager scoreManager;
 
     private void Start()
     {
+        RandomSpawnEnemy();
         scoreManager = FindFirstObjectByType<ScoreManager>();
-        scoreManager.SetOnPlayerLose(PlayerWin);
+        scoreManager.SetOnPlayerWin(PlayerWin);
         player.SetOnPlayerLose(PlayerLose);
-
-        finishText.enabled = false;
     }
 
     private void PlayerWin()
     {
-        finishText.text = "You Win";
-        finishText.enabled = true;
+        SavePlayerScore("Win");
         if (enemy != null) Destroy(enemy.gameObject);
+        SceneManager.LoadScene("Game Over");
     }
 
     private void PlayerLose()
     {
-        if (finishText != null)
-        {
-            finishText.text = "You Lose";
-            finishText.enabled = true;
-        }
-        enemy?.audioSource.Stop();
+        SavePlayerScore("Lose");
         if (enemy != null) Destroy(enemy);
         if (player != null) Destroy(player.gameObject);
+        SceneManager.LoadScene("Game Over");
+    }
+
+    private void SavePlayerScore(string condition)
+    {
+        int score = scoreManager.GetScore();
+        PlayerPrefs.SetInt("Score", score);
+        PlayerPrefs.SetString("Condition", condition);
+        PlayerPrefs.Save();
+    }
+
+    private void RandomSpawnEnemy()
+    {
+        int index = Random.Range(0, enemySpawnPoints.Length);
+        GameObject enemyGO = Instantiate(enemyPrefabs, enemySpawnPoints[index].position, Quaternion.identity);
+        enemy = enemyGO.GetComponent<Enemy>();
+        enemy.waypoints = enemyWaypoints;
+        enemy.player = player;
     }
 }
