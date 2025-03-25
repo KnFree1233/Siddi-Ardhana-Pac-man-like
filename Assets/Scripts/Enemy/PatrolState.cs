@@ -8,7 +8,6 @@ public class PatrolState : BaseState
     public void EnterState(Enemy enemy)
     {
         enemy.audioSource.Play();
-        enemy.animator.SetTrigger("PatrolState");
         enemy.navMeshAgent.speed = enemy.normalSpeed;
         isMoving = false;
         Debug.Log("Start Patrol");

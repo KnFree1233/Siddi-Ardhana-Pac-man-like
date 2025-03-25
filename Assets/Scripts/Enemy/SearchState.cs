@@ -11,7 +11,6 @@ public class SearchState : BaseState
     public void EnterState(Enemy enemy)
     {
         delayTimer = 0;
-        enemy.animator.SetTrigger("SearchState");
         searchedPlaceCount = 0;
         enemy.navMeshAgent.speed = enemy.normalSpeed;
 

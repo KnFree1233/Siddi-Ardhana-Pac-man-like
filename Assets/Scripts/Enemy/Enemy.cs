@@ -54,7 +54,9 @@ public class Enemy : MonoBehaviour
     }
 
     private void Update()
-    {
+    {   
+        animator.SetFloat("speed", navMeshAgent.velocity.magnitude);
+
         //**NOT MY CODE**//
         //Helper to see radius collider and fov raycast enemy in scene view during play mode
         DrawColliderLine.DrawFOVArcWithLines(transform.position, transform.forward, fovAngle, radius, Color.red, 0.1f, 20);

@@ -6,7 +6,6 @@ public class ChaseState : BaseState
 
     public void EnterState(Enemy enemy)
     {
-        enemy.animator.SetTrigger("ChaseState");
         playerLostTime = 0;
         enemy.navMeshAgent.speed = enemy.chaseSpeed;
         Debug.Log("Start Chasing");
