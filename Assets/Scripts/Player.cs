@@ -21,6 +21,7 @@ public class Player : MonoBehaviour
     [SerializeField] private float invisibleTime;
     [SerializeField] public float walkNoise;
     [SerializeField] public float runNoise;
+    [SerializeField] private float rotationTime = 0.1f;
 
     private Animator animator;
     private float currStamina;
@@ -33,10 +34,13 @@ public class Player : MonoBehaviour
     [HideInInspector] public float currNoise;
     private Rigidbody _rigidbody;
     private static Action OnPlayerLose;
+    private float rotationVelocity;
+    private float maxSpeed;
+    private bool isInfinite;
 
     void Awake()
     {
-        isPowerUp = false;
+        isInfinite = true;
         animator = GetComponent<Animator>();
         _rigidbody = GetComponent<Rigidbody>();
         currStamina = maxStamina;
@@ -84,18 +88,45 @@ public class Player : MonoBehaviour
         Cursor.visible = false;
     }
 
+    public void OnFootstep()
+    {
+        
+    }
+
     private void Movement()
     {
         float currSpeed = speed;
         MovementSpeed(ref currSpeed);
+        maxSpeed = currSpeed;
 
         Vector3 moveInput = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
-        Vector3 moveDirection = mainCamera.transform.TransformDirection(moveInput);
-        moveDirection.y = 0;
 
-        Vector3 newMovement = _rigidbody.position + moveDirection.normalized * currSpeed * Time.deltaTime;
+        if (moveInput.magnitude >= 0.1)
+        {
+            Vector3 moveDirection;
+            Rotating(out moveDirection, moveInput);
 
-        _rigidbody.MovePosition(newMovement);
+            _rigidbody.AddForce(moveDirection.normalized * speed);
+
+            if (_rigidbody.velocity.magnitude > maxSpeed)
+            {
+                _rigidbody.velocity = _rigidbody.velocity.normalized * maxSpeed;
+            }
+
+            animator.SetFloat("Speed", _rigidbody.velocity.magnitude);
+        }
+        else
+        {
+            animator.SetFloat("Speed", 0);
+        }
+    }
+
+    private void Rotating(out Vector3 moveDirection, Vector3 moveInput)
+    {
+        moveDirection = moveInput.x * mainCamera.right + moveInput.z * mainCamera.forward;
+        float rotationAngle = Mathf.Atan2(moveDirection.x, moveDirection.z) * Mathf.Rad2Deg;
+        float smoothAngle = Mathf.SmoothDampAngle(transform.eulerAngles.y, rotationAngle, ref rotationVelocity, rotationTime);
+        transform.rotation = Quaternion.Euler(0f, smoothAngle, 0f);
     }
 
     private void MovementSpeed(ref float currSpeed)

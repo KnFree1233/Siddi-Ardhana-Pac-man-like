@@ -9,7 +9,6 @@ public class DeadState : BaseState
         enemy.isDead = true;
         enemy.audioSource.Stop();
         delayTimer = 0;
-        enemy.animator.SetTrigger("DeadState");
         Debug.Log("Start Dead");
     }
 

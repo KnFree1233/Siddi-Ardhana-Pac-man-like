@@ -4,7 +4,6 @@ public class RetreatState : BaseState
 {
     public void EnterState(Enemy enemy)
     {
-        enemy.animator.SetTrigger("RetreatState");
         enemy.navMeshAgent.speed = enemy.chaseSpeed;
         Debug.Log("Start Retreating");
     }
