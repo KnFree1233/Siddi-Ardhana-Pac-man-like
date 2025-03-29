@@ -6,8 +6,8 @@ public class GameOverManager : MonoBehaviour
 {
     [SerializeField] TMP_Text conditionText;
     [SerializeField] TMP_Text scoreText;
-    [SerializeField] GameObject winImage;
-    [SerializeField] GameObject loseImage;
+    [SerializeField] AudioSource winAudio;
+    [SerializeField] AudioSource loseAudio;
 
     private void Start()
     {
@@ -17,11 +17,11 @@ public class GameOverManager : MonoBehaviour
         scoreText.text = "Score: " + PlayerPrefs.GetInt("Score").ToString();
         if (PlayerPrefs.GetString("Condition") == "Win")
         {
-            winImage.SetActive(true);
+            winAudio.Play();
         }
         else if (PlayerPrefs.GetString("Condition") == "Lose")
         {
-            loseImage.SetActive(true);
+            loseAudio.Play();
         }
     }
 

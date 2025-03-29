@@ -17,11 +17,11 @@ public class PatrolState : BaseState
     {
         if (!enemy.player.isInvisible)
         {
-            if (DetectingPlayer.DetectPlayer(enemy))
+            if (enemy.detectingPlayer.VisionOnPlayer(enemy))
             {
                 enemy.SwitchState(enemy.chaseState);
             }
-            else if (DetectingPlayer.HearingPlayer(enemy))
+            else if (enemy.detectingPlayer.HearingPlayer(enemy))
             {
                 enemy.SwitchState(enemy.searchState);
             }
@@ -36,7 +36,7 @@ public class PatrolState : BaseState
         }
         else
         {
-            if (Vector3.Distance(destination, enemy.transform.position) <= 0.1)
+            if (!enemy.navMeshAgent.pathPending && enemy.navMeshAgent.remainingDistance <= enemy.navMeshAgent.stoppingDistance)
             {
                 isMoving = false;
             }

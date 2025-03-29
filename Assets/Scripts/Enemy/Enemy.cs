@@ -26,6 +26,8 @@ public class Enemy : MonoBehaviour
     [HideInInspector] public AudioSource audioSource;
     [HideInInspector] public Transform target;
     [HideInInspector] public bool isDead;
+    [HideInInspector] public DetectingPlayer detectingPlayer;
+    [HideInInspector] public AudioSource foundPlayerSFX;
     private BaseState currentState;
     public PatrolState patrolState = new PatrolState();
     public ChaseState chaseState = new ChaseState();
@@ -37,6 +39,7 @@ public class Enemy : MonoBehaviour
     {
         isDead = false;
         target = null;
+        detectingPlayer = GetComponent<DetectingPlayer>();
         audioSource = GetComponent<AudioSource>();
         animator = GetComponent<Animator>();
         navMeshAgent = GetComponent<NavMeshAgent>();
@@ -46,6 +49,8 @@ public class Enemy : MonoBehaviour
 
     private void Start()
     {
+        foundPlayerSFX = GameObject.Find("Found Player SFX").GetComponent<AudioSource>();
+        navMeshAgent.avoidancePriority = Random.Range(30, 80);
         if (player != null)
         {
             player.OnPowerUpStart += StartRetreating;
@@ -54,16 +59,8 @@ public class Enemy : MonoBehaviour
     }
 
     private void Update()
-    {   
+    {
         animator.SetFloat("speed", navMeshAgent.velocity.magnitude);
-
-        //**NOT MY CODE**//
-        //Helper to see radius collider and fov raycast enemy in scene view during play mode
-        DrawColliderLine.DrawFOVArcWithLines(transform.position, transform.forward, fovAngle, radius, Color.red, 0.1f, 20);
-        DrawColliderLine.DrawOverlapSphere(transform.position, radius, Color.white, 0.1f);
-        DrawColliderLine.DrawOverlapSphere(transform.position, noiseTolerance + player.walkNoise, Color.cyan, 0.1f);
-        DrawColliderLine.DrawOverlapSphere(transform.position, noiseTolerance + player.runNoise, Color.blue, 0.1f);
-        //**//
         if (currentState != null)
         {
             currentState.UpdateState(this);
@@ -92,7 +89,7 @@ public class Enemy : MonoBehaviour
         SwitchState(deadState);
     }
 
-    private void OnCollisionEnter(Collision other)
+    private void OnTriggerEnter(Collider other)
     {
         if (player.isInvisible || player.isPowerUp) return;
 
@@ -100,5 +97,10 @@ public class Enemy : MonoBehaviour
         {
             player.Dead(1);
         }
+    }
+
+    public void DestroySelf()
+    {
+        Destroy(gameObject);
     }
 }

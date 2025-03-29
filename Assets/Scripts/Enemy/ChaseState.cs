@@ -6,6 +6,7 @@ public class ChaseState : BaseState
 
     public void EnterState(Enemy enemy)
     {
+        enemy.foundPlayerSFX.Play();
         playerLostTime = 0;
         enemy.navMeshAgent.speed = enemy.chaseSpeed;
         Debug.Log("Start Chasing");
@@ -20,13 +21,13 @@ public class ChaseState : BaseState
                 enemy.SwitchState(enemy.patrolState);
                 return;
             }
-            if (DetectingPlayer.DetectPlayer(enemy))
+            if (enemy.detectingPlayer.VisionOnPlayer(enemy))
             {
                 playerLostTime = 0;
                 enemy.navMeshAgent.destination = enemy.player.transform.position;
                 return;
             }
-            else if (DetectingPlayer.HearingPlayer(enemy))
+            else if (enemy.detectingPlayer.HearingPlayer(enemy))
             {
                 playerLostTime = 0;
                 enemy.navMeshAgent.destination = enemy.target.position;

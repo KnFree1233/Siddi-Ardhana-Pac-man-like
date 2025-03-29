@@ -190,7 +190,9 @@ GameObject:
   m_Component:
   - component: {fileID: 420354581311480695}
   - component: {fileID: 7324062271550482092}
+  - component: {fileID: 1791631829200901291}
   - component: {fileID: 8526128293560188388}
+  - component: {fileID: 5900997484494982782}
   - component: {fileID: 3509115799268707462}
   - component: {fileID: 5911195046134218731}
   - component: {fileID: 9071487421322264057}
@@ -241,6 +243,29 @@ CapsuleCollider:
   m_Height: 2
   m_Direction: 1
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!136 &1791631829200901291
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7324897503551806319}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.5
+  m_Height: 2
+  m_Direction: 1
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &8526128293560188388
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -253,8 +278,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: abcda568d50e6624c97303789c1ee9f7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  fovAngle: 110
-  radius: 10
+  fovAngle: 80
+  radius: 20
   obstacleLayer:
     serializedVersion: 2
     m_Bits: 64
@@ -263,7 +288,7 @@ MonoBehaviour:
     m_Bits: 8
   timeToLostPlayer: 2
   normalSpeed: 2.5
-  chaseSpeed: 3.2
+  chaseSpeed: 3.3
   searchRadius: 4
   manyPlaceToSearch: 3
   searchMoveDelay: 5
@@ -291,6 +316,19 @@ MonoBehaviour:
   audioSource: {fileID: 0}
   target: {fileID: 0}
   isDead: 0
+  detectingPlayer: {fileID: 0}
+--- !u!114 &5900997484494982782
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7324897503551806319}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0248764e959076046afd46cd9ec55011, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!195 &3509115799268707462
 NavMeshAgent:
   m_ObjectHideFlags: 0

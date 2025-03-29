@@ -1,9 +1,9 @@
 using UnityEngine;
 
-public static class DetectingPlayer
+public class DetectingPlayer : MonoBehaviour
 {
     //Function for detect player based on angle fov and enemy can't see through wall
-    public static bool DetectPlayer(Enemy enemy)
+    public bool VisionOnPlayer(Enemy enemy)
     {
         Transform enemyTransform = enemy.transform;
         Collider[] rangeChecks = CheckOverlapShpere(enemyTransform.position, enemy.radius, enemy.playerLayer);
@@ -18,12 +18,10 @@ public static class DetectingPlayer
                 float distanceToTarget = Vector3.Distance(enemyTransform.position, target.position);
                 if (!Physics.Raycast(enemyTransform.position, directionToTarget, distanceToTarget, enemy.obstacleLayer))
                 {
-                    DrawColliderLine.DrawRaycastTarget(enemyTransform.position, directionToTarget, enemy.radius, Color.green);
                     return true;
                 }
                 else
                 {
-                    DrawColliderLine.DrawRaycastTarget(enemyTransform.position, directionToTarget, enemy.radius, Color.red);
                     return false;
                 }
             }
@@ -40,7 +38,7 @@ public static class DetectingPlayer
     }
 
     //Function for detect player base float noise on player and float noise tolerance on enemy
-    public static bool HearingPlayer(Enemy enemy)
+    public bool HearingPlayer(Enemy enemy)
     {
         enemy.target = null;
         Transform enemyTransform = enemy.transform;
@@ -50,7 +48,12 @@ public static class DetectingPlayer
             Transform target = rangeChecks[0].transform;
             float distanceToTarget = Vector3.Distance(target.position, enemyTransform.position);
 
-            if (distanceToTarget - enemy.player.currNoise < enemy.noiseTolerance)
+            float playerNoise = enemy.player.GetCurrNoise();
+            if (playerNoise == 0)
+            {
+                return false;
+            }
+            else if (distanceToTarget - enemy.player.GetCurrNoise() < enemy.noiseTolerance)
             {
                 enemy.target = target;
                 return true;
@@ -60,7 +63,7 @@ public static class DetectingPlayer
         return false;
     }
 
-    private static Collider[] CheckOverlapShpere(Vector3 position, float radius, LayerMask layer)
+    private Collider[] CheckOverlapShpere(Vector3 position, float radius, LayerMask layer)
     {
         return Physics.OverlapSphere(position, radius, layer);
     }

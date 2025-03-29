@@ -5,7 +5,6 @@ public static class DrawColliderLine
     public static void DrawFOVArcWithLines(Vector3 origin, Vector3 forward, float fovAngle, float viewDistance, Color color, float duration = 0.1f, int segments = 20)
     {
         float halfFOV = fovAngle / 2;
-
         // Calculate the left and right boundary points of the arc.
         Vector3 leftBoundary = origin + Quaternion.Euler(0, -halfFOV, 0) * forward * viewDistance;
         Vector3 rightBoundary = origin + Quaternion.Euler(0, halfFOV, 0) * forward * viewDistance;

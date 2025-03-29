@@ -6,6 +6,7 @@ public class PickableManager : MonoBehaviour
 {
     [SerializeField] private Player player;
     [SerializeField] ScoreManager scoreManager;
+    [SerializeField] AudioSource pickupCoinSFX;
 
     private List<Pickable> pickableList = new List<Pickable>();
 
@@ -24,12 +25,15 @@ public class PickableManager : MonoBehaviour
             pickableList.Add(pickables[i]);
         }
         scoreManager?.SetMaxScore(pickableList.Count);
-        Debug.Log(pickableList.Count);
     }
 
     private void OnPickablePicked(Pickable pickable)
     {
-        if (pickable.pickableType == PickableType.PowerUp)
+        if (pickable.pickableType == PickableType.Coin)
+        {
+            pickupCoinSFX.Play();
+        }
+        else if (pickable.pickableType == PickableType.PowerUp)
         {
             player?.PickPowerUp();
         }

@@ -32,12 +32,12 @@ public class SearchState : BaseState
         }
         else if(!enemy.player.isInvisible)
         {
-            if (DetectingPlayer.DetectPlayer(enemy))
+            if (enemy.detectingPlayer.VisionOnPlayer(enemy))
             {
                 enemy.SwitchState(enemy.chaseState);
                 return;
             }
-            if (DetectingPlayer.HearingPlayer(enemy))
+            if (enemy.detectingPlayer.HearingPlayer(enemy))
             {
                 searchedPlaceCount = 0;
                 delayTimer = 0;
