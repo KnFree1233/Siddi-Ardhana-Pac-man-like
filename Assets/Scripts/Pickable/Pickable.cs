@@ -1,11 +1,11 @@
 using UnityEngine;
 using System;
 
-public class Pickable : MonoBehaviour
+public abstract class Pickable : MonoBehaviour
 {
-    [SerializeField] public PickableType pickableType;
     [SerializeField] private float rotationSpeed;
 
+    public PickableType type { get; protected set; }
     public Action<Pickable> OnPicked;
 
     private void Update()
@@ -19,10 +19,14 @@ public class Pickable : MonoBehaviour
         {
             if (OnPicked != null)
             {
+                TriggerEffect();
                 OnPicked(this);
             }
 
             Destroy(gameObject);
         }
     }
+
+    protected abstract void TriggerEffect();
+    public abstract void Initialize(); 
 }

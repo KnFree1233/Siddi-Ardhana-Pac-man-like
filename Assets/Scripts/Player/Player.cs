@@ -10,9 +10,6 @@ public class Player : MonoBehaviour
     [SerializeField] private int playerHealth;
     [SerializeField] private TMP_Text healthText;
     [SerializeField] private float invisibleTime;
-    [SerializeField] private AudioSource powerUpSFX;
-    [SerializeField] private AudioSource powerDownSFX;
-    [SerializeField] private AudioSource playerDead;
 
     PlayerMovement playerMovement;
     private Coroutine powerUpCoroutine;
@@ -36,13 +33,13 @@ public class Player : MonoBehaviour
     private IEnumerator StartPowerUp()
     {
         isPowerUp = true;
-        powerUpSFX.Play();
+        SfxManager.Instance.PlayAudio("Power Up");
         playerMovement.ActiveInfinite();
         Debug.Log("Start Power Up");
         OnPowerUpStart?.Invoke();
         yield return new WaitForSeconds(powerUpDuration);
         isPowerUp = false;
-        powerDownSFX.Play();
+        SfxManager.Instance.PlayAudio("Power Down");
         playerMovement.DeactivateInfinite();
         OnPowerUpStop?.Invoke();
         Debug.Log("Stop Power Up");
@@ -67,30 +64,33 @@ public class Player : MonoBehaviour
     {
         if (isPowerUp && hit.gameObject.CompareTag("Enemy"))
         {
-            hit.gameObject.GetComponent<Enemy>().Dead();
+            Enemy enemy = hit.gameObject.GetComponent<Enemy>();
+            if(!enemy.isDead) enemy.Dead();
         }
     }
 
-    public void Dead(int damage)
+    public void Dead()
     {
-        playerDead.Play();
+        isInvisible = true;
         if (playerHealth <= 0) return;
-        playerHealth -= damage;
+        playerHealth--;
         if (playerHealth == 0)
         {
             OnPlayerLose?.Invoke();
         }
         else
         {
-            StartCoroutine(InvisibleTimer());
+            SfxManager.Instance.PlayAudio("Dead");
+            playerMovement.StopMovementEnabled();
             transform.position = respawnPoint.position;
+            playerMovement.StopMovementEnabled();
+            StartCoroutine(InvisibleTimer());
         }
         healthText.text = playerHealth.ToString();
     }
 
     private IEnumerator InvisibleTimer()
     {
-        isInvisible = true;
         yield return new WaitForSeconds(invisibleTime);
         isInvisible = false;
     }

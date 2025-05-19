@@ -7,7 +7,6 @@ public class PatrolState : BaseState
 
     public void EnterState(Enemy enemy)
     {
-        enemy.audioSource.Play();
         enemy.navMeshAgent.speed = enemy.normalSpeed;
         isMoving = false;
         Debug.Log("Start Patrol");
@@ -29,8 +28,8 @@ public class PatrolState : BaseState
         if (!isMoving)
         {
             isMoving = true;
-            int index = Random.Range(0, enemy.waypoints.Count);
-            destination = enemy.waypoints[index].position;
+            int index = Random.Range(0, enemy.waypointSet.waypoints.Count);
+            destination = enemy.waypointSet.waypoints[index].position;
 
             enemy.navMeshAgent.destination = destination;
         }

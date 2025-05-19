@@ -3,8 +3,8 @@ using UnityEngine;
 public class SearchState : BaseState
 {
     private bool isMoving;
-    private Vector3 targetPosition;
-    private int searchedPlaceCount;
+    public Vector3 targetPosition;
+    public int searchedPlaceCount;
     private float delayTimer;
     private Vector3 lookDirection;
 
@@ -14,7 +14,7 @@ public class SearchState : BaseState
         searchedPlaceCount = 0;
         enemy.navMeshAgent.speed = enemy.normalSpeed;
 
-        if (enemy.target != null) targetPosition = enemy.target.position;
+        if (enemy.detectingPlayer.currTarget != null) targetPosition = enemy.detectingPlayer.currTarget.position;
         else targetPosition = enemy.player.transform.position;
 
         lookDirection = targetPosition - enemy.transform.position;
@@ -25,7 +25,7 @@ public class SearchState : BaseState
 
     public void UpdateState(Enemy enemy)
     {
-        DrawColliderLine.DrawOverlapSphere(targetPosition, enemy.searchRadius * searchedPlaceCount, Color.yellow);
+        // DrawColliderLine.DrawOverlapSphere(targetPosition, enemy.searchRadius * searchedPlaceCount, Color.yellow);
         if (enemy.player.isInvisible)
         {
             enemy.SwitchState(enemy.patrolState);
@@ -42,7 +42,7 @@ public class SearchState : BaseState
                 searchedPlaceCount = 0;
                 delayTimer = 0;
                 isMoving = true;
-                enemy.navMeshAgent.destination = enemy.target.position;
+                enemy.navMeshAgent.destination = enemy.detectingPlayer.currTarget.position;
             }
         }
         if (searchedPlaceCount >= enemy.manyPlaceToSearch)
@@ -67,7 +67,6 @@ public class SearchState : BaseState
             else if (delayTimer >= enemy.searchMoveDelay)
             {
                 searchedPlaceCount++;
-                enemy.audioSource.Play();
                 isMoving = true;
                 Vector3 searchingArea = Random.insideUnitSphere * enemy.searchRadius * searchedPlaceCount;
                 searchingArea.y = 0;
@@ -80,7 +79,6 @@ public class SearchState : BaseState
         {
             if (!enemy.navMeshAgent.pathPending && enemy.navMeshAgent.remainingDistance <= enemy.navMeshAgent.stoppingDistance)
             {
-                enemy.audioSource.Stop();
                 delayTimer = 0;
                 isMoving = false;
             }
@@ -89,7 +87,6 @@ public class SearchState : BaseState
 
     public void ExitState(Enemy enemy)
     {
-        enemy.audioSource.Play();
         Debug.Log("Stop Searching");
     }
 }

@@ -41,8 +41,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 704606014705887556}
-  - component: {fileID: 5006612269075521228}
   - component: {fileID: 1275712574441757032}
+  - component: {fileID: 1870289594323756792}
   m_Layer: 0
   m_Name: Power Up
   m_TagString: Untagged
@@ -66,20 +66,6 @@ Transform:
   - {fileID: 197831242881944977}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &5006612269075521228
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5917533339672563256}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7e1bca03c60a40d428da653de1c03360, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  pickableType: 1
-  rotationSpeed: 50
 --- !u!136 &1275712574441757032
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -103,6 +89,19 @@ CapsuleCollider:
   m_Height: 0.5
   m_Direction: 1
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &1870289594323756792
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5917533339672563256}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8a1ac36b7163097489dfca616ef8d745, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  rotationSpeed: 10
 --- !u!1001 &5197063022512391642
 PrefabInstance:
   m_ObjectHideFlags: 0

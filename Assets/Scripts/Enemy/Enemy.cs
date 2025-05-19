@@ -1,13 +1,11 @@
-using System.Collections.Generic;
+using System;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.AI;
+using Random = UnityEngine.Random;
 
 public class Enemy : MonoBehaviour
 {
-    [Range(0, 360)][SerializeField] public float fovAngle;
-    [SerializeField] public float radius;
-    [SerializeField] public LayerMask obstacleLayer;
-    [SerializeField] public LayerMask playerLayer;
     [SerializeField] public float timeToLostPlayer;
     [SerializeField] public float normalSpeed;
     [SerializeField] public float chaseSpeed;
@@ -17,18 +15,16 @@ public class Enemy : MonoBehaviour
     [SerializeField] public float deadDelay;
     [SerializeField] public float angleRotate;
     [SerializeField] public float rotatingSpeed;
-    [SerializeField] public float noiseTolerance;
 
     [HideInInspector] public Player player;
-    [HideInInspector] public List<Transform> waypoints = new List<Transform>();
+    [HideInInspector] public WaypointSet waypointSet;
     [HideInInspector] public NavMeshAgent navMeshAgent;
     [HideInInspector] public Animator animator;
-    [HideInInspector] public AudioSource audioSource;
-    [HideInInspector] public Transform target;
     [HideInInspector] public bool isDead;
     [HideInInspector] public DetectingPlayer detectingPlayer;
-    [HideInInspector] public AudioSource foundPlayerSFX;
-    private BaseState currentState;
+    [HideInInspector] public EnemySFX enemySFX;
+    [HideInInspector] public EnemyWalkSfx enemyWalkSfx;
+    public BaseState currentState;
     public PatrolState patrolState = new PatrolState();
     public ChaseState chaseState = new ChaseState();
     public RetreatState retreatState = new RetreatState();
@@ -38,18 +34,18 @@ public class Enemy : MonoBehaviour
     private void Awake()
     {
         isDead = false;
-        target = null;
         detectingPlayer = GetComponent<DetectingPlayer>();
-        audioSource = GetComponent<AudioSource>();
         animator = GetComponent<Animator>();
         navMeshAgent = GetComponent<NavMeshAgent>();
+        enemySFX = GetComponentInChildren<EnemySFX>();
+        enemyWalkSfx = GetComponentInChildren<EnemyWalkSfx>();
+        enemyWalkSfx.Init(navMeshAgent);
         currentState = patrolState;
         patrolState.EnterState(this);
     }
 
     private void Start()
     {
-        foundPlayerSFX = GameObject.Find("Found Player SFX").GetComponent<AudioSource>();
         navMeshAgent.avoidancePriority = Random.Range(30, 80);
         if (player != null)
         {
@@ -95,12 +91,39 @@ public class Enemy : MonoBehaviour
 
         if (other.gameObject.CompareTag("Player"))
         {
-            player.Dead(1);
+            player.Dead();
         }
+    }
+
+    public void DestroyNavMeshAgent()
+    {
+        Collider[] colliders = GetComponents<Collider>();
+        foreach (Collider collider in colliders)
+        {
+            Destroy(collider);
+        }
+        navMeshAgent.enabled = false;
+        animator.applyRootMotion = true;
     }
 
     public void DestroySelf()
     {
         Destroy(gameObject);
+    }
+
+    public void WaitForAnimation(Animator animator, string stateName, Action OnCompleted)
+    {
+        StartCoroutine(AnimationCoroutine(animator, stateName, OnCompleted));
+    }
+
+    public IEnumerator AnimationCoroutine(Animator animator, string stateName, Action OnCompleted)
+    {
+        while (!animator.GetCurrentAnimatorStateInfo(0).IsName(stateName))
+            yield return null;
+
+        while (animator.GetCurrentAnimatorStateInfo(0).normalizedTime < 1f)
+            yield return null;
+
+        OnCompleted.Invoke();
     }
 }

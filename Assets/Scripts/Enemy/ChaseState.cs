@@ -6,7 +6,7 @@ public class ChaseState : BaseState
 
     public void EnterState(Enemy enemy)
     {
-        enemy.foundPlayerSFX.Play();
+        SfxManager.Instance.PlayAudio("Found Player");
         playerLostTime = 0;
         enemy.navMeshAgent.speed = enemy.chaseSpeed;
         Debug.Log("Start Chasing");
@@ -30,7 +30,7 @@ public class ChaseState : BaseState
             else if (enemy.detectingPlayer.HearingPlayer(enemy))
             {
                 playerLostTime = 0;
-                enemy.navMeshAgent.destination = enemy.target.position;
+                enemy.navMeshAgent.destination = enemy.detectingPlayer.currTarget.position;
                 return;
             }
             if (playerLostTime >= enemy.timeToLostPlayer)

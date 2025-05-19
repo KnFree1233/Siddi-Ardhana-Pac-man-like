@@ -20,6 +20,7 @@ public class PlayerMovement : MonoBehaviour
     private Animator animator;
     private CharacterController characterController;
     private Vector3 moveInput;
+    private bool isStop;
     private float rotationVelocity;
     private float currMaxSpeed;
     private float currSpeed;
@@ -30,6 +31,7 @@ public class PlayerMovement : MonoBehaviour
 
     private void Awake()
     {
+        isStop = false;
         characterController = GetComponent<CharacterController>();
         animator = GetComponent<Animator>();
         currSpeed = 0;
@@ -48,6 +50,7 @@ public class PlayerMovement : MonoBehaviour
 
     private void Movement()
     {
+        if(isStop) return;
         StaminaManagement(ref currMaxSpeed);
 
         moveInput = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
@@ -107,12 +110,12 @@ public class PlayerMovement : MonoBehaviour
                 if (currStamina < 0) currStamina = 0;
             }
         }
-        if (staminaRegenTime >= delayStaminaRegen && currStamina < maxStamina)
+        else if (staminaRegenTime >= delayStaminaRegen && currStamina < maxStamina && !IsRunning())
         {
             currStamina += staminaRegenSpeed * Time.deltaTime;
             if (currStamina >= maxStamina) currStamina = maxStamina;
         }
-        else
+        else if (!IsRunning())
         {
             staminaRegenTime += Time.deltaTime;
         }
@@ -124,21 +127,22 @@ public class PlayerMovement : MonoBehaviour
 
     private bool HasMovementInput()
     {
-        if(moveInput.magnitude >= 0.1f) return true;
+        if (moveInput.magnitude >= 0.1f) return true;
         else return false;
     }
 
     private void SetCurrNoise()
     {
         if (IsRunning()) currNoise = runNoise;
-        else if(HasMovementInput()) currNoise = walkNoise;
+        else if (HasMovementInput()) currNoise = walkNoise;
         else currNoise = 0;
     }
 
     private void SetCurrMaxSpeed()
     {
-        if (IsRunning()) currMaxSpeed = runMaxSpeed;
-        else if(HasMovementInput()) currMaxSpeed = walkMaxSpeed;
+        if (isStop) return;
+        else if (IsRunning() && currStamina > 0) currMaxSpeed = runMaxSpeed;
+        else if (HasMovementInput()) currMaxSpeed = walkMaxSpeed;
         else currMaxSpeed = 0;
     }
 
@@ -167,6 +171,17 @@ public class PlayerMovement : MonoBehaviour
     public void DeactivateInfinite()
     {
         isStaminaInfinite = false;
+    }
+
+    public void StopMovementEnabled()
+    {
+        isStop = !isStop;
+        characterController.enabled = !isStop;
+        if (isStop)
+        {
+            currSpeed = 0;
+            currMaxSpeed = 0;
+        }
     }
 
     public void OnFootstep()

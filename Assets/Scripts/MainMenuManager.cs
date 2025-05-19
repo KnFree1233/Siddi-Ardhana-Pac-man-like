@@ -3,18 +3,19 @@ using UnityEngine.SceneManagement;
 
 public class MainMenuManager : MonoBehaviour
 {
-    private void Start()
+    [SerializeField] GameObject mainMenuScene;
+    [SerializeField] GameObject loadingScene;
+
+    private void Awake()
     {
-
-    }
-
-    private void Update()
-    {
-
+        mainMenuScene.SetActive(true);
+        loadingScene.SetActive(false);
     }
 
     public void Play()
     {
+        mainMenuScene.SetActive(false);
+        loadingScene.SetActive(true);
         SceneManager.LoadScene("Gameplay");
     }
 

@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using TMPro;
 using UnityEngine;
 
 public class PickableManager : MonoBehaviour
@@ -22,6 +21,10 @@ public class PickableManager : MonoBehaviour
         for (int i = 0; i < pickables.Length; i++)
         {
             pickables[i].OnPicked += OnPickablePicked;
+            if (pickables[i] is PowerUp powerUp)
+            {
+                powerUp.Initialize(player);
+            }
             pickableList.Add(pickables[i]);
         }
         scoreManager?.SetMaxScore(pickableList.Count);
@@ -29,14 +32,6 @@ public class PickableManager : MonoBehaviour
 
     private void OnPickablePicked(Pickable pickable)
     {
-        if (pickable.pickableType == PickableType.Coin)
-        {
-            pickupCoinSFX.Play();
-        }
-        else if (pickable.pickableType == PickableType.PowerUp)
-        {
-            player?.PickPowerUp();
-        }
         scoreManager?.AddScore(1);
         pickableList.Remove(pickable);
     }

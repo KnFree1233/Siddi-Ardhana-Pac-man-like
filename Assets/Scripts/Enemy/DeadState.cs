@@ -2,30 +2,40 @@ using UnityEngine;
 
 public class DeadState : BaseState
 {
-    private float delayTimer;
+    private float timer = 5f;
+    private bool startCount = false;
 
     public void EnterState(Enemy enemy)
     {
         enemy.isDead = true;
-        enemy.audioSource.Stop();
-        delayTimer = 0;
+        enemy.DestroyNavMeshAgent();
+        enemy.enemySFX.StopSfx();
+        enemy.animator.SetBool("death", true);
         Debug.Log("Start Dead");
-        enemy.DestroySelf();
+        enemy.WaitForAnimation(enemy.animator, "10-death_fall_backward", CountingDead);
     }
 
     public void UpdateState(Enemy enemy)
     {
-        // if (delayTimer >= enemy.deadDelay)
-        // {
-        //     enemy.SwitchState(enemy.patrolState);
-        // }
-        // delayTimer += Time.deltaTime;
+        if (startCount && timer > 0)
+        {
+            timer -= Time.deltaTime;
+        }
+        else if (timer <= 0)
+        {
+            GameManager.SpawnEnemy(enemy.waypointSet.set);
+            enemy.DestroySelf();
+        }
     }
 
     public void ExitState(Enemy enemy)
     {
         enemy.isDead = false;
-        enemy.audioSource.Play();
         Debug.Log("Stop Dead");
+    }
+
+    private void CountingDead()
+    {
+        startCount = true;
     }
 }
